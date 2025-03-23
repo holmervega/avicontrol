@@ -1,0 +1,43 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Ajusta las imágenes para que no excedan un tamaño específico */
+.img-clientes, .img-pedidos, .img-reportes {
+    max-width: 200px;  /* Limita el ancho máximo */
+    max-height: 200px; /* Limita la altura máxima */
+    width: 100%;  /* Asegura que las imágenes se ajusten al tamaño máximo */
+    height: auto;  /* Mantiene la proporción */
+    border-radius: 30%;  /* Hace la imagen circular */
+    margin-top: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Resaltar la imagen al pasar el mouse */
+.img-link:hover .img-clientes,
+.img-link:hover .img-pedidos,
+.img-link:hover .img-reportes {
+    transform: scale(1.1); /* Aumenta el tamaño de la imagen */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Agrega sombra */
+}
+
+/* Hacer que las imágenes sean clicables */
+.img-link {
+    display: inline-block;
+}
+
+
+footer {
+    margin-top: auto;  /* Empuja el pie hacia abajo */
+    padding-top: 20px;  /* Espacio entre el contenido y el pie */
+    background-color: #f8f9fa;  /* Color de fondo del pie */
+    text-align: center;  /* Centra el texto */
+    width: 100%;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

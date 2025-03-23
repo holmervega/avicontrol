@@ -1,0 +1,20 @@
+body{
+    background:#ffe259;
+    background: linear-gradient(to right, #ffa751,#ffe259);
+}
+
+/* Estilo específico para el botón "Editar" */
+.btn-success.btn-sm {
+    width: 80px; /* Ajusta el tamaño según lo necesario */
+}
+
+/* Estilo específico para el botón "Eliminar" */
+.btn-danger.btn-sm {
+    width: 80px; /* Asegura que el tamaño sea consistente */
+}
+
+/* Fondo blanco para el cuerpo de la tabla */
+.table-body-bg tr {
+    background-color: #ffffff; /* Blanco */
+
+}
