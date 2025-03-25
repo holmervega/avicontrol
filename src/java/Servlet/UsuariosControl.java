@@ -1,114 +1,64 @@
 package Servlet;
 
-import Controlador.PersonaDAO;
-import Controlador.RolesDAO;
-import Controlador.TipoIdentificacionDAO;
 import Controlador.UsuariosDAO;
-import Modelo.InformacionUsuariosDTO;
 import Modelo.Persona;
-import Modelo.RegistroUsuariosDTO;
 import Modelo.Roles;
 import Modelo.TipoIdentificacion;
 import Modelo.Usuarios;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+// Cargar datos en la lista de usuarios registrados
 @WebServlet(name = "UsuariosControl", urlPatterns = {"/UsuariosControl"})
 public class UsuariosControl extends HttpServlet {
 
-    private PersonaDAO personaDAO = new PersonaDAO();
-    private RolesDAO rolesDAO = new RolesDAO();
-    private UsuariosDAO usuariosDAO = new UsuariosDAO();
-    private TipoIdentificacionDAO tipoIdentificacionDAO = new TipoIdentificacionDAO();
-    
-// cargar usuarios con todos los datos en la vista usuarios
-   @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String action = request.getParameter("action");
-    
-    if (action != null && action.equals("editar")) {
-        int idPersona = Integer.parseInt(request.getParameter("idPersona")); // Obtener el idPersona desde el parámetro
-
-        // Obtener los datos de la persona
-        Persona persona = personaDAO.obtenerPersonaPorId(idPersona);
-        
-        // Obtener el nombre de usuario y contraseña asociados
-        Usuarios usuario = usuariosDAO.obtenerUsuarioPorId(persona.getUsuarios_idUsuarios());
-
-        // Cargar roles y tipos de identificación
-        List<TipoIdentificacion> tiposIdentificacion = tipoIdentificacionDAO.obtenerTipoIdentificacionBD();
-        List<Roles> roles = rolesDAO.obtenerRolesdeBD();
-
-        // Pasar los datos a la vista
-        request.setAttribute("persona", persona);
-        request.setAttribute("usuario", usuario);
-        request.setAttribute("tipoIdentificacion", tiposIdentificacion);
-        request.setAttribute("roles", roles);
-        
-        // Redirigir a la vista de edición (editar.jsp)
-        RequestDispatcher dispatcher = request.getRequestDispatcher("editar.jsp");
-        dispatcher.forward(request, response);
-    } else {
-        // Cargar la lista de usuarios (como ya lo haces en el método doGet actual)
-        List<Persona> listaPersonas = personaDAO.listarPersonas();
-        List<InformacionUsuariosDTO> listaInformacionUsuarios = new ArrayList<>();
-
-        for (Persona p : listaPersonas) {
-            String descripcionRol = rolesDAO.obtenerDescripcionporid(p.getRoles_idRoles());
-            Usuarios usuario = usuariosDAO.obtenerUsuarioPorId(p.getUsuarios_idUsuarios());
-            String nombreUsuario = (usuario != null) ? usuario.getNombreUsuario() : "N/A";
-            String contrasenaUsuario = (usuario != null) ? usuario.getContrasenaUsuario() : "N/A";
-            String descripcionTipoIdentificacion = tipoIdentificacionDAO.obtenerDescripcionTipoIdentificacionpoId(p.getTipoIdentificacion_idTipoIdentificacion());
-
-            InformacionUsuariosDTO infoUsuario = new InformacionUsuariosDTO(
-                    p.getNumeroIdentificacion(),
-                    p.getNombres(),
-                    p.getApellidos(),
-                    p.getTelefono(),
-                    p.getCorreo(),
-                    p.getDireccion(),
-                    descripcionRol,
-                    nombreUsuario,
-                    contrasenaUsuario,
-                    descripcionTipoIdentificacion
-            );
-
-            listaInformacionUsuarios.add(infoUsuario);
-        }
-
-        // Cargar roles y tipos de identificación para el formulario dentro del modal
-        List<TipoIdentificacion> tiposIdentificacion = tipoIdentificacionDAO.obtenerTipoIdentificacionBD();
-        List<Roles> roles = rolesDAO.obtenerRolesdeBD();
-
-        request.setAttribute("informacionUsuarios", listaInformacionUsuarios);
-        request.setAttribute("tipoIdentificacion", tiposIdentificacion);
-        request.setAttribute("roles", roles);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("usuarios.jsp");
-        dispatcher.forward(request, response);
-    }
-}
-
-    // Registrar una nueva persona con usuario
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        UsuariosDAO usuariosDAO = new UsuariosDAO();
+
+        // Obtener la lista de usuarios registrados
+        List<Usuarios> listaUsuarios = usuariosDAO.listarUsuarios();
+        request.setAttribute("listaUsuarios", listaUsuarios);
+
+        // Obtener la lista de tipos de identificación para el select
+        List<TipoIdentificacion> listaTipos = usuariosDAO.obtenerTiposIdentificacion();
+        request.setAttribute("listaTipos", listaTipos);
+
+        // Obtener la lista de roles para el select
+        List<Roles> listaRoles = usuariosDAO.obtenerRoles();
+        request.setAttribute("listaRoles", listaRoles);
+
+        request.getRequestDispatcher("usuarios.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         String action = request.getParameter("action");
 
-        // Capturar el valor recibido antes de convertirlo
-        String idTipoIdentificacionStr = request.getParameter("idTipoIdentificacion");
-
-        if (idTipoIdentificacionStr == null || idTipoIdentificacionStr.isEmpty()) {
-            System.out.println("Error: idTipoIdentificacion es null o vacío");
-            response.sendRedirect("error.jsp"); // Puedes redirigir a una página de error si lo deseas
-            return;
+        if ("registrarUsuario".equals(action)) {
+            registrarUsuario(request, response);
+        } else if ("verificarUsuario".equals(action)) { // Nueva acción para obtener usuario por ID
+            verificarUsuario(request, response);
         }
+    }
+//registrar ususario en la base de dats
+    private void registrarUsuario(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        UsuariosDAO usuarioDAO = new UsuariosDAO();
+
+        // Capturar datos del formulario
+        String nombreUsuario = request.getParameter("nombreUsuario");
+        String contrasenaUsuario = request.getParameter("contrasenaUsuario");
         int idTipoIdentificacion = Integer.parseInt(request.getParameter("idTipoIdentificacion"));
         int numeroIdentificacion = Integer.parseInt(request.getParameter("numeroIdentificacion"));
         String nombres = request.getParameter("nombres");
@@ -116,27 +66,46 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response) t
         String telefono = request.getParameter("telefono");
         String correo = request.getParameter("correo");
         String direccion = request.getParameter("direccion");
-        int idRol = Integer.parseInt(request.getParameter("idRol"));
-        String nombreUsuario = request.getParameter("nombreUsuario");
-        String contrasenaUsuario = request.getParameter("contrasenaUsuario");
+        int idRoles = Integer.parseInt(request.getParameter("idRoles"));
 
-        // Crear objeto DTO con los datos del usuario
-        RegistroUsuariosDTO registroDTO = new RegistroUsuariosDTO(idTipoIdentificacion, numeroIdentificacion, nombres, apellidos, telefono, correo, direccion, idRol, nombreUsuario, contrasenaUsuario);
+        // Crear objetos de Usuario y Persona
+        Usuarios usuario = new Usuarios();
+        usuario.setNombreUsuario(nombreUsuario);
+        usuario.setContrasenaUsuario(contrasenaUsuario);
 
-// Crear usuario y obtener ID generado
-        int idUsuario = usuariosDAO.crearUsuario(registroDTO);
+        Persona persona = new Persona();
+        persona.setNumeroIdentificacion(numeroIdentificacion);
+        persona.setNombres(nombres);
+        persona.setApellidos(apellidos);
+        persona.setTelefono(telefono);
+        persona.setCorreo(correo);
+        persona.setDireccion(direccion);
+        persona.setIdTipoIdentificacion(idTipoIdentificacion);
+        persona.setIdRoles(idRoles);
 
-        if (idUsuario > 0) {
-            // Asignar el idUsuario generado al DTO antes de registrar la persona
-            registroDTO.setIdUsuarios(idUsuario);
-            personaDAO.registrarPersona(registroDTO, idUsuario);
+        // Registrar en la base de datos
+        boolean registroExitoso = usuarioDAO.registrarUsuario(persona, usuario);
 
+        if (registroExitoso) {
+            request.getSession().setAttribute("success", "true");
         } else {
-            System.out.println("Error al registrar el usuario.");
+            request.getSession().setAttribute("error", "true");
         }
-
         response.sendRedirect("UsuariosControl");
-
     }
 
+    private void verificarUsuario(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int idPersona = Integer.parseInt(request.getParameter("idPersona"));
+        UsuariosDAO usuariosDAO = new UsuariosDAO();
+        Usuarios usuario = usuariosDAO.obtenerUsuarioPorId(idPersona);
+
+        if (usuario != null) {
+            request.setAttribute("usuario", usuario);
+            request.getRequestDispatcher("usuarios.jsp").forward(request, response);
+        } else {
+            response.sendRedirect("usuarios.jsp?error=UsuarioNoEncontrado");
+        }
+    }
 }

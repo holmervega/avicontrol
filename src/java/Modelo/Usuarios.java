@@ -6,6 +6,16 @@ public class Usuarios {
     private int idUsuarios;
     private String nombreUsuario;
     private String contrasenaUsuario;
+      private Persona persona;
+
+    public Persona getPersona() {
+        return persona;
+    }
+
+    public void setPersona(Persona persona) {
+        this.persona = persona;
+    }
+  
 
     public int getIdUsuarios() {
         return idUsuarios;

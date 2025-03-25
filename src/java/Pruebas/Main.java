@@ -3,35 +3,42 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package Pruebas;
-import Controlador.PersonaDAO;
-import Modelo.Persona;
-import java.sql.SQLException;
+import Controlador.UsuariosDAO;
+import Modelo.Usuarios;
 
 public class Main {
+
+
+
+
+
     public static void main(String[] args) {
-        // Instanciar el DAO y llamar al método que obtiene los datos de la persona
-        PersonaDAO personaDAO = new PersonaDAO();
+        UsuariosDAO usuarioDAO = new UsuariosDAO();
         
-        // Suponiendo que quieres obtener la persona con idPersona = 1
-        int idPersona = 2;
+        // ID de la persona que queremos obtener
+        int idPersona = 2; // Cambia este valor según tu base de datos
         
-        // Obtener la persona
-        Persona persona = personaDAO.obtenerPersonaPorId(idPersona);
-        
-        // Verificar si la persona fue encontrada y mostrar los datos
-        if (persona != null) {
-            System.out.println("Persona encontrada:");
-            System.out.println("ID Persona: " + persona.getNumeroIdentificacion());
-            System.out.println("Tipo de Identificación: " + persona.getTipoIdentificacion_idTipoIdentificacion());
-            System.out.println("Número de Identificación: " + persona.getNumeroIdentificacion());
-            System.out.println("Nombres: " + persona.getNombres());
-            System.out.println("Apellidos: " + persona.getApellidos());
-            System.out.println("Teléfono: " + persona.getTelefono());
-            System.out.println("Correo: " + persona.getCorreo());
-            System.out.println("Dirección: " + persona.getDireccion());
-            System.out.println("ID Rol: " + persona.getRoles_idRoles());
+        Usuarios usuario = usuarioDAO.obtenerUsuarioPorId(idPersona);
+
+        if (usuario != null) {
+            System.out.println("✅ Usuario encontrado:");
+            System.out.println("ID Usuario: " + usuario.getIdUsuarios());
+            System.out.println("Nombre Usuario: " + usuario.getNombreUsuario());
+            System.out.println("Contraseña: " + usuario.getContrasenaUsuario());
+            System.out.println("ID Persona: " + usuario.getPersona().getIdPersona());
+            System.out.println("Nombres: " + usuario.getPersona().getNombres());
+            System.out.println("Apellidos: " + usuario.getPersona().getApellidos());
+            System.out.println("Teléfono: " + usuario.getPersona().getTelefono());
+            System.out.println("Correo: " + usuario.getPersona().getCorreo());
+            System.out.println("Dirección: " + usuario.getPersona().getDireccion());
+            System.out.println("Tipo Identificación: " + usuario.getPersona().getDescripcionTipoIdentificacion());
+            System.out.println("Rol: " + usuario.getPersona().getDescripcionRol());
         } else {
-            System.out.println("Persona no encontrada.");
+            System.out.println("❌ No se encontró un usuario con el ID de persona: " + idPersona);
         }
     }
 }
+
+
+
+

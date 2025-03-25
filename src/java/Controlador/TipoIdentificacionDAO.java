@@ -1,7 +1,5 @@
 package Controlador;
 
-import Controlador.Conexion;
-import Modelo.TipoIdentificacion;
 import Modelo.TipoIdentificacion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

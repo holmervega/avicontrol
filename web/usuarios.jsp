@@ -3,7 +3,28 @@
     Created on : 11/03/2025, 12:21:11 p. m.
     Author     : holmer
 --%>
-<%@ page import="Modelo.InformacionUsuariosDTO" %>
+<%
+    String success = (String) session.getAttribute("success");
+    String error = (String) session.getAttribute("error");
+
+    // Eliminar atributos de sesión para que no se muestren después de la primera carga
+    session.removeAttribute("success");
+    session.removeAttribute("error");
+%>
+
+<% if ("true".equals(success)) { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    Usuario registrado correctamente.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<% } else if ("true".equals(error)) { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    Error al registrar el usuario. Inténtelo nuevamente.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<% } %>
+
+<%@ page import="Modelo.Usuarios" %>
 <%@ page import="java.util.List" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -51,12 +72,8 @@
             <h1 class="text-center p-3"></h1>
 
             <!-- Tabla de Usuarios -->
-
-            <%
-             List<InformacionUsuariosDTO> informacionUsuarios = (List<InformacionUsuariosDTO>) request.getAttribute("informacionUsuarios");
-
-            %>
-
+ 
+           
             <div class="container my-4">
                 <h2 class="text-center mb-4">Usuarios Registrados</h2>
                 <div class="table-responsive">
@@ -77,31 +94,29 @@
                             </tr>
                         </thead>
                         <tbody id="usuarios">
-                            <% 
-                                if (informacionUsuarios != null && !informacionUsuarios.isEmpty()) {
-                                    for (InformacionUsuariosDTO usuario : informacionUsuarios)
- { 
+                            <%
+                                List<Usuarios> listaUsuarios = (List<Usuarios>) request.getAttribute("listaUsuarios");
+                                if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
+                                    for (Usuarios usuario : listaUsuarios) {
                             %>
                             <tr>
-                                <td><%= usuario.getDescripcionTipoIdentificacion() %></td>
-                                <td><%= usuario.getNumeroIdentificacion() %></td>
-                                <td><%= usuario.getNombres() %></td>
-                                <td><%= usuario.getApellidos() %></td>
-                                <td><%= usuario.getTelefono() %></td>
-                                <td><%= usuario.getCorreo() %></td>
-                                <td><%= usuario.getDireccion() %></td>
-                                <td><%= usuario.getDescripcionRol() %></td>
+                                <td><%= usuario.getPersona().getDescripcionTipoIdentificacion() %></td>
+                                <td><%= usuario.getPersona().getNumeroIdentificacion() %></td>
+                                <td><%= usuario.getPersona().getNombres() %></td>
+                                <td><%= usuario.getPersona().getApellidos() %></td>
+                                <td><%= usuario.getPersona().getTelefono() %></td>
+                                <td><%= usuario.getPersona().getCorreo() %></td>
+                                <td><%= usuario.getPersona().getDireccion() %></td>
+                                <td><%= usuario.getPersona().getDescripcionRol() %></td>
                                 <td><%= usuario.getNombreUsuario() %></td>
                                 <td><%= usuario.getContrasenaUsuario() %></td>
                                 <td class="text-center">
                                     <!-- Botón para abrir el modal y pasar el idPersona -->
-                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modificarUsuario" 
-                                            data-id="${persona.idPersona}">
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modificarUsuario">
                                         Editar
                                     </button>
                                     <button type="button" class="btn btn-sm btn-danger ms-2">Eliminar</button>
                                 </td>
-
                             </tr>
                             <% 
                                     }
@@ -115,6 +130,7 @@
                     </table>
                 </div>
             </div>
+
 
 
             <div class="row">
@@ -140,12 +156,111 @@
                             <form method="POST" action="UsuariosControl">
                                 <input type="hidden" name="action" value="registrarUsuario"> <!-- Acción para identificar en el Servlet -->
 
+                                <!-- Select de Tipo de Identificación -->
+                                <div class="mb-3">
+                                    <label for="tipo_identificacion" class="form-label">Tipo Identificación</label>
+                                    <select class="form-control" name="idTipoIdentificacion" id="tipoidentificacion" required>
+                                        <option value="">Seleccione...</option>
+                                        <c:forEach var="tipo" items="${listaTipos}">
+                                            <option value="${tipo.idTipoIdentificacion}">${tipo.descripcionTipoIdentificacion}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+
+
+
+                                <!-- Identificación -->
+                                <div class="mb-3">
+                                    <label for="numeroIdentificacion" class="form-label">Identificación</label>
+                                    <input type="text" class="form-control" name="numeroIdentificacion" id="identificacion" required>
+                                </div>
+
+                                <!-- Nombres -->
+                                <div class="mb-3">
+                                    <label for="nombres" class="form-label">Nombres</label>
+                                    <input type="text" class="form-control" name="nombres" id="nombres" required>
+                                </div>
+
+                                <!-- Apellidos -->
+                                <div class="mb-3">
+                                    <label for="apellidos" class="form-label">Apellidos</label>
+                                    <input type="text" class="form-control" name="apellidos" id="apellidos" required>
+                                </div>
+
+                                <!-- Teléfono -->
+                                <div class="mb-3">
+                                    <label for="telefono" class="form-label">Teléfono</label>
+                                    <input type="text" class="form-control" name="telefono" id="telefono" required>
+                                </div>
+
+                                <!-- Correo -->
+                                <div class="mb-3">
+                                    <label for="correo" class="form-label">Correo</label>
+                                    <input type="email" class="form-control" name="correo" id="correo" required>
+                                </div>
+
+                                <!-- Dirección -->
+                                <div class="mb-3">
+                                    <label for="direccion" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" name="direccion" id="direccion" required>
+                                </div>
+
+                                <!-- Usuario -->
+                                <div class="mb-3">
+                                    <label for="usuario" class="form-label">Usuario</label>
+                                    <input type="text" class="form-control" name="nombreUsuario" id="usuario" required>
+                                </div>
+
+                                <!-- Contraseña -->
+                                <div class="mb-3">
+                                    <label for="contrasena" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" name="contrasenaUsuario" id="contrasena" required>
+                                </div>
+
+                                <!-- Rol -->
+                                <div class="mb-3">
+                                    <label for="rol" class="form-label">Rol</label>
+                                    <select class="form-control" name="idRoles" id="rol" required>
+                                        <option value="">Seleccione...</option>
+                                        <c:forEach var="rol" items="${listaRoles}">
+                                            <option value="${rol.idRoles}">${rol.descripcionRol}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+
+                                <!-- Botones -->
+                                <div class="d-flex justify-content-between">
+                                    <button type="submit" class="btn btn-primary">Registrar</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+            <!-- Modal modificar -->
+            
+            <div class="modal fade" id="modificarUsuario" tabindex="-1" aria-labelledby="modificarUsuarioLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header d-flex justify-content-center">
+                            <h5 class="modal-title" id="modificarUsuarioLabel">Editar Usuario</h5>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST" action="UsuariosControl">
+                                <input type="hidden" name="action" value="registrarUsuario"> <!-- Acción para identificar en el Servlet -->
+
                                 <!-- Tipo de Identificación -->
                                 <div class="mb-3">
                                     <label for="tipo_identificacion" class="form-label">Tipo Identificación</label>
-                                    <select class="form-control" name="idTipoIdentificacion" id="tipo_identificacion" required>
+                                    <select class="form-control" name="idTipoIdentificacion" id="tipoidentificacion" required>
                                         <option value="">Seleccione...</option>
-                                        <c:forEach var="tipo" items="${tipoIdentificacion}">
+                                        <c:forEach var="tipo" items="${listaTipos}">
                                             <option value="${tipo.idTipoIdentificacion}">${tipo.descripcionTipoIdentificacion}</option>
                                         </c:forEach>
                                     </select>
@@ -201,113 +316,10 @@
 
                                 <!-- Rol -->
                                 <div class="mb-3">
-                                    <label for="rol" class="form-label">Rol</label>
-                                    <select class="form-control" name="idRol" id="rol" required>
+                                   <label for="rol" class="form-label">Rol</label>
+                                    <select class="form-control" name="idRoles" id="rol" required>
                                         <option value="">Seleccione...</option>
-                                        <c:forEach var="rol" items="${roles}">
-                                            <option value="${rol.idRoles}">${rol.descripcionRol}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-
-                                <!-- Botones -->
-                                <div class="d-flex justify-content-between">
-                                    <button type="submit" class="btn btn-primary">Registrar</button>
-                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-
-
-            <!-- Modal modificar -->
-            
-            <div class="modal fade" id="modificarUsuario" tabindex="-1" aria-labelledby="modificarUsuarioLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header d-flex justify-content-center">
-                            <h5 class="modal-title" id="modificarUsuarioLabel">Editar Usuario</h5>
-                        </div>
-                        <div class="modal-body">
-                            <form method="POST" action="UsuariosControl">
-                                <input type="hidden" name="action" value="registrarUsuario"> <!-- Acción para identificar en el Servlet -->
-
-                                <!-- Tipo de Identificación -->
-                                <div class="mb-3">
-                                    <label for="tipo_identificacion" class="form-label">Tipo Identificación</label>
-                                    <select class="form-control" name="idTipoIdentificacion" id="tipo_identificacion" required>
-                                        <option value="">Seleccione...</option>
-                                        <c:forEach var="tipo" items="${tipoIdentificacion}">
-                                            <option value="${tipo.idTipoIdentificacion}"
-                                                    <c:if test="${tipo.idTipoIdentificacion == persona.idTipoIdentificacion}">
-                                                        selected
-                                                    </c:if>
-                                                    >
-                                                ${tipo.descripcionTipoIdentificacion}
-                                            </option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-
-                                <!-- Identificación -->
-                                <div class="mb-3">
-                                    <label for="numeroIdentificacion" class="form-label">Identificación</label>
-                                    <input type="text" class="form-control" name="numeroIdentificacion" id="identificacion" required>
-                                </div>
-
-                                <!-- Nombres -->
-                                <div class="mb-3">
-                                    <label for="nombres" class="form-label">Nombres</label>
-                                    <input type="text" class="form-control" name="nombres" id="nombres" required>
-                                </div>
-
-                                <!-- Apellidos -->
-                                <div class="mb-3">
-                                    <label for="apellidos" class="form-label">Apellidos</label>
-                                    <input type="text" class="form-control" name="apellidos" id="apellidos" required>
-                                </div>
-
-                                <!-- Teléfono -->
-                                <div class="mb-3">
-                                    <label for="telefono" class="form-label">Teléfono</label>
-                                    <input type="text" class="form-control" name="telefono" id="telefono" required>
-                                </div>
-
-                                <!-- Correo -->
-                                <div class="mb-3">
-                                    <label for="correo" class="form-label">Correo</label>
-                                    <input type="email" class="form-control" name="correo" id="correo" required>
-                                </div>
-
-                                <!-- Dirección -->
-                                <div class="mb-3">
-                                    <label for="direccion" class="form-label">Dirección</label>
-                                    <input type="text" class="form-control" name="direccion" id="direccion" required>
-                                </div>
-
-                                <!-- Usuario -->
-                                <div class="mb-3">
-                                    <label for="usuario" class="form-label">Usuario</label>
-                                    <input type="text" class="form-control" name="nombreUsuario" id="usuario" required>
-                                </div>
-
-                                <!-- Contraseña -->
-                                <div class="mb-3">
-                                    <label for="contrasena" class="form-label">Contraseña</label>
-                                    <input type="password" class="form-control" name="contrasenaUsuario" id="contrasena" required>
-                                </div>
-
-                                <!-- Rol -->
-                                <div class="mb-3">
-                                    <label for="rol" class="form-label">Rol</label>
-                                    <select class="form-control" name="idRol" id="rol" required>
-                                        <option value="">Seleccione...</option>
-                                        <c:forEach var="rol" items="${roles}">
+                                        <c:forEach var="rol" items="${listaRoles}">
                                             <option value="${rol.idRoles}">${rol.descripcionRol}</option>
                                         </c:forEach>
                                     </select>
@@ -333,4 +345,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
