@@ -210,6 +210,7 @@ public class UsuariosDAO {
             PreparedStatement sentencia = nuevaCon.prepareStatement(querySQL);
             sentencia.setInt(1, idPersona);
             ResultSet rs = sentencia.executeQuery();
+            
 
             if (rs.next()) {
                 usuario = new Usuarios();
