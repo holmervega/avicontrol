@@ -14,8 +14,30 @@ public class Persona {
     private int Usuarios_idUsuarios;
     public int IdRoles;
     private String descripcionTipoIdentificacion;
-    private String descripcionRol;
-    public int IdTipoIdentificacion;
+    private String descripcionRol;  
+    private TipoIdentificacion tipoIdentificacion;
+    private Roles roles;
+       
+     
+      
+    public Roles getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Roles roles) {
+        this.roles = roles;
+    }
+  
+
+
+    public TipoIdentificacion getTipoIdentificacion() {
+        return tipoIdentificacion;
+    }
+
+    public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion) {
+        this.tipoIdentificacion = tipoIdentificacion;
+    }
+     
     
      public int getIdRoles() {
         return IdRoles;
@@ -23,14 +45,6 @@ public class Persona {
 
     public void setIdRoles(int IdRoles) {
         this.IdRoles = IdRoles;
-    }
-
-    public int getIdTipoIdentificacion() {
-        return IdTipoIdentificacion;
-    }
-
-    public void setIdTipoIdentificacion(int IdTipoIdentificacion) {
-        this.IdTipoIdentificacion = IdTipoIdentificacion;
     }
 
     public String getDescripcionRol() {

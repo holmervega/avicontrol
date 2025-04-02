@@ -1,68 +1,96 @@
 package Controlador;
 
 import Modelo.Roles;
+import java.util.ArrayList;
+import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RolesDAO {
-
-    // obtener personas por id para mostrar en la vista de ususarios
-    public String obtenerDescripcionporid(int idRoles) {
-        String descripcionRol = "";
-        String sql = "SELECT descripcionRol FROM roles WHERE idRoles = ?";
-
-        try {
-            Conexion miconexion = new Conexion();
-            Connection nuevaCon = miconexion.getConn();
-            PreparedStatement ps = nuevaCon.prepareStatement(sql);
-            ps.setInt(1, idRoles);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                descripcionRol = rs.getString("descripcionRol");
-            }
-
-            rs.close();
-            ps.close();
-            nuevaCon.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return descripcionRol;
-    }
-
-    // mostrar los roles creados en la base de datos para poder selecionar 
-    public List<Roles> obtenerRolesdeBD() {
+    
+    //para mostrar en lod diferentes select 
+    
+     public List<Roles> obtenerRolesBD() {
         List<Roles> listaRoles = new ArrayList<>();
         String sql = "SELECT * FROM roles";
+        Connection nuevaCon = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
         try {
+            // Obtener la conexión a la base de datos
             Conexion miconexion = new Conexion();
-            Connection nuevaCon = miconexion.getConn();
-            PreparedStatement ps = nuevaCon.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+            nuevaCon = miconexion.getConn();
 
+            // Preparar la consulta
+            ps = nuevaCon.prepareStatement(sql);
+
+            // Ejecutar la consulta
+            rs = ps.executeQuery();
+
+            // Procesar los resultados
             while (rs.next()) {
                 Roles rol = new Roles();
-                rol.setIdRoles(rs.getInt("idRoles"));
-                rol.setDescripcionRol(rs.getString("descripcionRol"));
+                rol.setIdRoles(rs.getInt("idRoles"));  // Asegúrate de que el nombre de la columna coincida
+                rol.setDescripcionRol(rs.getString("descripcionRol"));  // Asegúrate de que el nombre de la columna coincida
+
                 listaRoles.add(rol);
             }
 
-            rs.close();
-            ps.close();
-            nuevaCon.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            // Cerrar los recursos explícitamente
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (nuevaCon != null) {
+                    nuevaCon.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return listaRoles;
     }
+//obtener la descripcion del rol para mostrar en la table de editar 
+    public String obtenerDescripcionRolPorIdPersona(int idPersona) {
+        Conexion miconexion = new Conexion();
+        Connection nuevaCon = miconexion.getConn();
+        String descripcionRol = null;
+
+        String sql = "SELECT r.descripcionRol "
+                + "FROM persona p "
+                + "JOIN roles r ON p.Roles_idRoles = r.idRoles "
+                + "WHERE p.idPersona = ?";
+
+        try (PreparedStatement pst = nuevaCon.prepareStatement(sql)) {
+            pst.setInt(1, idPersona);
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                descripcionRol = rs.getString("descripcionRol");
+            }
+        } catch (SQLException e) {
+            System.out.println("⚠ Error al obtener la descripción del rol: " + e.getMessage());
+        } finally {
+            try {
+                if (nuevaCon != null) {
+                    nuevaCon.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("⚠ Error al cerrar la conexión: " + e.getMessage());
+            }
+        }
+        return descripcionRol;
+    }
+
 
 }

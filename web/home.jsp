@@ -1,6 +1,6 @@
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <html>
  
 
@@ -29,7 +29,7 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="UsuariosControl">USUARIOS</a>
+                                <a class="nav-link active" aria-current="page" href="UsuariosControl?action=mostrarUsuarios">USUARIOS</a>
                             </li>        
                             <li class="nav-item" id="menuUsuarios">
                                 <a class="nav-link active" aria-current="page" href="#">CLIENTES</a>
@@ -40,9 +40,7 @@
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="#">REPORTES</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="home.html">INICIO</a>
-                            </li>
+                            
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="LogoutControl">SALIR</a>
                             </li>

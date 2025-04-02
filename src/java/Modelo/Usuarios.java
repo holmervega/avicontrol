@@ -6,7 +6,17 @@ public class Usuarios {
     private int idUsuarios;
     private String nombreUsuario;
     private String contrasenaUsuario;
-      private Persona persona;
+    private Persona persona;
+     private Roles roles;
+
+    public Roles getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Roles roles) {
+        this.roles = roles;
+    }
+   
 
     public Persona getPersona() {
         return persona;

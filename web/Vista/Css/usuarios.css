@@ -13,8 +13,10 @@ body{
     width: 80px; /* Asegura que el tamaño sea consistente */
 }
 
-/* Fondo blanco para el cuerpo de la tabla */
-.table-body-bg tr {
-    background-color: #ffffff; /* Blanco */
-
+.tabla-fondo-personalizado {
+    background-color: #f0f8ff; /* Cambia el color de fondo que desees */
 }
+.container-fluid {
+    max-width: 98%; /* Permite que la tabla use casi todo el ancho */
+}
+

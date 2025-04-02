@@ -9,90 +9,87 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TipoIdentificacionDAO {
-    
-    //obtener el tipo de identificacion por medio de del idtopoidentificaion para mostar en la vista usuarios
 
-    public String obtenerDescripcionTipoIdentificacionpoId(int idTipoIdentificacion) {
-        String descripcion = "No encontrado";
-        String sql = "SELECT descripcionTipoIdentificacion FROM tipoidentificacion WHERE idTipoIdentificacion = ?";
-
-        try {
-            Conexion miconexion = new Conexion();
-            Connection nuevaCon = miconexion.getConn();
-            PreparedStatement ps = nuevaCon.prepareStatement(sql);
-            ps.setInt(1, idTipoIdentificacion);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                descripcion = rs.getString("descripcionTipoIdentificacion");
-            }
-
-            rs.close();
-            ps.close();
-            nuevaCon.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return descripcion;
-    }
-    
     public List<TipoIdentificacion> obtenerTipoIdentificacionBD() {
         List<TipoIdentificacion> listaTipos = new ArrayList<>();
         String sql = "SELECT * FROM tipoIdentificacion";
+        Connection nuevaCon = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
         try {
+            // Obtener la conexión a la base de datos
             Conexion miconexion = new Conexion();
-            Connection nuevaCon = miconexion.getConn();
-            PreparedStatement ps = nuevaCon.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+            nuevaCon = miconexion.getConn();
 
+            // Preparar la consulta
+            ps = nuevaCon.prepareStatement(sql);
+
+            // Ejecutar la consulta
+            rs = ps.executeQuery();
+
+            // Procesar los resultados
             while (rs.next()) {
                 TipoIdentificacion tipo = new TipoIdentificacion();
                 tipo.setIdTipoIdentificacion(rs.getInt("idTipoIdentificacion"));
-                tipo.setDescripcionTipoIdentificacion(rs.getString("descripcionTipoIdentificacion")); // Aquí aseguramos que coincide
+                tipo.setDescripcionTipoIdentificacion(rs.getString("descripcionTipoIdentificacion")); // Verifica si es correcto
 
                 listaTipos.add(tipo);
             }
 
-            rs.close();
-            ps.close();
-            nuevaCon.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            // Cerrar los recursos explícitamente
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (nuevaCon != null) {
+                    nuevaCon.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return listaTipos;
     }
     
-    //obtener la descripcion de rol por medio de Roles_idRoles de la tabla ususario
-    public String obtenerNombreRolPorId(int idRoles) {
-    String nombreRol = null;
-    String sql = "SELECT descripcionRol FROM roles WHERE idRoles = ?";
-    
-    try {
-        Conexion miconexion = new Conexion(); // Crea la conexión
-        Connection nuevaCon = miconexion.getConn(); // Obtiene la conexión
-        PreparedStatement ps = nuevaCon.prepareStatement(sql); // Prepara la consulta
+    // obterner descrion para mostraren la tabla editar 
+    public String obtenerDescripcionPorIdPersona(int idPersona) {
+    Conexion miconexion = new Conexion();
+    Connection nuevaCon = miconexion.getConn();
+    String descripcion = null;
 
-        ps.setInt(1, idRoles); // Establece el parámetro (idRol)
-        ResultSet rs = ps.executeQuery(); // Ejecuta la consulta y obtiene el ResultSet
+    String sql = "SELECT ti.descripcionTipoIdentificacion " +
+                 "FROM persona p " +
+                 "JOIN tipoidentificacion ti ON p.TipoIdentificacion_idTipoIdentificacion = ti.idTipoIdentificacion " +
+                 "WHERE p.idPersona = ?";
+
+    try (PreparedStatement pst = nuevaCon.prepareStatement(sql)) {
+        pst.setInt(1, idPersona);
+        ResultSet rs = pst.executeQuery();
 
         if (rs.next()) {
-            nombreRol = rs.getString("descripcionRol"); // Obtiene el nombre del rol
+            descripcion = rs.getString("descripcionTipoIdentificacion");
         }
-
-        // Cerramos la conexión
-        rs.close();
-        ps.close();
-        nuevaCon.close();
-
     } catch (SQLException e) {
-        e.printStackTrace(); // Manejo de excepciones
+        System.out.println("⚠ Error al obtener la descripción del tipo de identificación: " + e.getMessage());
+    } finally {
+        try {
+            if (nuevaCon != null) {
+                nuevaCon.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("⚠ Error al cerrar la conexión: " + e.getMessage());
+        }
     }
-
-    return nombreRol; // Retorna el nombre del rol
+    return descripcion;
 }
 
+    
 }

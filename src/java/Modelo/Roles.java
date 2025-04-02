@@ -4,6 +4,26 @@ public class Roles {
 
     private int idRoles;
     private String descripcionRol;
+    private String descripcion;
+    
+       public Roles(int idRoles, String descripcion) {
+        this.idRoles = idRoles;
+        this.descripcion = descripcion;
+    }
+
+    public Roles() {
+       
+    }
+    
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+  
 
     public int getIdRoles() {
         return idRoles;
