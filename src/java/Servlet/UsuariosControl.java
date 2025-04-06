@@ -124,7 +124,7 @@ public class UsuariosControl extends HttpServlet {
                     System.out.println("✅ Usuario encontrado: " + usuario.getNombreUsuario());
 
                     // 🔹 Mensajes adicionales para depuración
-                    System.out.println("🔹 Enviando datos a editarusuario.jsp...");
+                    System.out.println("🔹 Enviando datos a EditarUsuario.jsp...");
                     System.out.println("   - Persona: " + persona.getNombres() + " " + persona.getApellidos());
                     System.out.println("   - Roles: " + (listaRoles != null ? listaRoles.size() : "No cargados"));
                     System.out.println("   - Tipos de Identificación: " + (tiposIdentificacion != null ? tiposIdentificacion.size() : "No cargados"));
@@ -138,7 +138,7 @@ public class UsuariosControl extends HttpServlet {
 
 
 
-                    request.getRequestDispatcher("editarusuario.jsp").forward(request, response);
+                    request.getRequestDispatcher("EditarUsuario.jsp").forward(request, response);
                 } catch (NumberFormatException e) {
                     System.out.println("⚠ Error: idPersona no es un número válido.");
                     
@@ -287,8 +287,8 @@ public class UsuariosControl extends HttpServlet {
             persona.setTelefono(telefono);
             persona.setCorreo(correo);
             persona.setDireccion(direccion);
-           persona.setTipoIdentificacion_idTipoIdentificacion(tipoIdentificacion);
-             persona.setRoles_idRoles(rol);
+            persona.setTipoIdentificacion_idTipoIdentificacion(tipoIdentificacion);
+            persona.setRoles_idRoles(rol);
 
             Usuarios usuario = new Usuarios();
             usuario.setNombreUsuario(nombreUsuario);

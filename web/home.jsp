@@ -31,8 +31,8 @@
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="UsuariosControl?action=mostrarUsuarios">USUARIOS</a>
                             </li>        
-                            <li class="nav-item" id="menuUsuarios">
-                                <a class="nav-link active" aria-current="page" href="#">CLIENTES</a>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="ClientesControl?action=listarClientes">CLIENTES</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="#">PEDIDOS</a>

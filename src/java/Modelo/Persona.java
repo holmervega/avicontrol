@@ -28,8 +28,6 @@ public class Persona {
         this.roles = roles;
     }
   
-
-
     public TipoIdentificacion getTipoIdentificacion() {
         return tipoIdentificacion;
     }
