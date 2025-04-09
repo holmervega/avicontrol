@@ -149,6 +149,7 @@ public class UsuariosDAO {
             }
         }
     }
+    
 //obterner para la tabla de editar 
 
     public Usuarios obtenerUsuarioPorIdPersona(int idPersona) {

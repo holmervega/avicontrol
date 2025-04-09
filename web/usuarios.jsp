@@ -49,7 +49,7 @@ if (mensaje != null) {
                 <ul class="navbar-nav ms-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">CLIENTES</a>
+                        <a class="nav-link active" aria-current="page" href="ClientesControl?action=listarClientes">CLIENTES</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">PEDIDOS</a>

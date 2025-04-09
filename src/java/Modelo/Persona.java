@@ -14,10 +14,18 @@ public class Persona {
     private int Usuarios_idUsuarios;
     public int IdRoles;
     private String descripcionTipoIdentificacion;
-    private String descripcionRol;  
+    private String descripcionRol;
     private TipoIdentificacion tipoIdentificacion;
     private Roles roles;
-       
+    private boolean estado;
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    } 
      
       
     public Roles getRoles() {
