@@ -266,6 +266,49 @@ public boolean actualizarCliente(Persona persona) {
 
     return actualizado;
 }
+// para la tabla de pedios 
+public Persona obtenerPersonaPorNumeroIdentificacion(int numeroIdentificacion) {
+    Conexion miconexion = new Conexion();
+    Connection nuevaCon = miconexion.getConn();
+    Persona persona = null;
+
+    String sql = "SELECT * FROM persona WHERE numeroIdentificacion = ?";
+
+    try {
+        PreparedStatement ps = nuevaCon.prepareStatement(sql);
+        ps.setInt(1, numeroIdentificacion);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            // Verificar el rol de la persona
+            int rolId = rs.getInt("Roles_idRoles");
+            if (rolId == 9) {
+                // Si tiene el rol 9, cargamos la persona
+                persona = new Persona();
+                persona.setIdPersona(rs.getInt("idPersona"));
+                persona.setNumeroIdentificacion(rs.getInt("numeroIdentificacion"));
+                persona.setNombres(rs.getString("nombres"));
+                persona.setApellidos(rs.getString("apellidos"));
+                persona.setTelefono(rs.getString("telefono"));
+                persona.setCorreo(rs.getString("correo"));
+                persona.setDireccion(rs.getString("direccion"));
+                persona.setTipoIdentificacion_idTipoIdentificacion(rs.getInt("TipoIdentificacion_idTipoIdentificacion"));
+                persona.setRoles_idRoles(rs.getInt("Roles_idRoles"));
+            } else {
+                // Si no tiene el rol 9, no devolvemos la persona
+                persona = null;
+            }
+        }
+
+        rs.close();
+        ps.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return persona;
+}
+
 
 
 }

@@ -7,7 +7,7 @@ public class Usuarios {
     private String nombreUsuario;
     private String contrasenaUsuario;
     private Persona persona;
-     private Roles roles;
+    private Roles roles;
 
     public Roles getRoles() {
         return roles;

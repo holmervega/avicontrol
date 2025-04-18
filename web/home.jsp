@@ -35,7 +35,8 @@
                                 <a class="nav-link active" aria-current="page" href="ClientesControl?action=listarClientes">CLIENTES</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#">PEDIDOS</a>
+                               <a class="nav-link active" aria-current="page" href="PedidosControl?action=listarPedidos">PEDIDOS</a>
+
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="#">REPORTES</a>
