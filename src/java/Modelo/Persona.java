@@ -18,6 +18,7 @@ public class Persona {
     private TipoIdentificacion tipoIdentificacion;
     private Roles roles;
     private boolean estado;
+    
 
     public boolean isEstado() {
         return estado;

@@ -9,13 +9,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PedidoDetalleDAO {
 
-
-
-// mostrar los pedios que hay en la base de datos
+    //listar los pedidos en la vista de pedidos.jsp
     public List<PedidoDetalle> listarPedidos() {
         List<PedidoDetalle> lista = new ArrayList<>();
 
@@ -23,63 +23,77 @@ public class PedidoDetalleDAO {
         Conexion miconexion = new Conexion();
         Connection conn = miconexion.getConn();
 
-        String sql = "SELECT pd.*, pc.idPedidoCabecera AS idCabecera, pc.numeroPedido, pc.fechaPedido, "
-                + "p.nombres AS nombrePersona, p.apellidos AS apellidoPersona,p.numeroIdentificacion AS identificacionPersona, "
+        // Modificar la consulta SQL para no agrupar los productos, cantidades y precios
+        String sql = "SELECT pc.idPedidoCabecera AS idCabecera, pc.numeroPedido, pc.fechaPedido, "
+                + "p.nombres AS nombrePersona, p.apellidos AS apellidoPersona, p.numeroIdentificacion AS identificacionPersona, "
                 + "pr.nombre AS nombreProducto, pr.descripcion AS descripcionProducto, "
-                + "u.descripcionUnidades AS descripcionUnidad "
+                + "u.descripcionUnidades AS descripcionUnidad, "
+                + "pd.cantidad, pd.precioUnitario, pd.valorPedido "
                 + "FROM pedidodetalle pd "
                 + "JOIN pedidocabecera pc ON pd.PedidoCabecera_idPedidoCabecera = pc.idPedidoCabecera "
                 + "JOIN persona p ON pc.Persona_idPersona = p.idPersona "
                 + "JOIN productos pr ON pd.Productos_idProductos = pr.idProductos "
-                + "JOIN unidades u ON pd.Unidades_idUnidades = u.idUnidades";
+                + "JOIN unidades u ON pd.Unidades_idUnidades = u.idUnidades "
+                + "ORDER BY pc.idPedidoCabecera";
 
-        // Usamos try-with-resources para asegurarnos de que la conexión y los recursos se cierren adecuadamente
         try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            Map<Integer, PedidoDetalle> mapaPedidos = new HashMap<>();
 
             while (rs.next()) {
-                PedidoDetalle pd = new PedidoDetalle();
-                // PedidoDetalle
-                pd.setIdPedidoDetalle(rs.getInt("idPedidoDetalle"));
-                pd.setCantidad(rs.getDouble("cantidad"));
-                pd.setPrecioUnitario(rs.getDouble("precioUnitario"));
-                pd.setValorPedido(rs.getDouble("valorPedido"));
-                pd.setPedidoCabecera_idPedidoCabecera(rs.getInt("PedidoCabecera_idPedidoCabecera"));
-                pd.setProductos_idProductos(rs.getInt("Productos_idProductos"));
-                pd.setUnidades_idUnidades(rs.getInt("Unidades_idUnidades"));
+                int idPedidoCabecera = rs.getInt("idCabecera");
 
-                // PedidoCabecera
-                PedidoCabecera cabecera = new PedidoCabecera();
-                cabecera.setIdPedidoCabecera(rs.getInt("idCabecera"));
-                cabecera.setNumeroPedido(rs.getInt("numeroPedido"));
-                cabecera.setFechaPedido(rs.getString("fechaPedido"));
-                pd.setPedidoCabecera(cabecera);
+                // Si el pedido no existe en el mapa, crear uno nuevo
+                PedidoDetalle pd = mapaPedidos.get(idPedidoCabecera);
+                if (pd == null) {
+                    pd = new PedidoDetalle();
 
-                // Productos
+                    // PedidoCabecera
+                    PedidoCabecera cabecera = new PedidoCabecera();
+                    cabecera.setIdPedidoCabecera(idPedidoCabecera);
+                    cabecera.setNumeroPedido(rs.getInt("numeroPedido"));
+                    cabecera.setFechaPedido(rs.getString("fechaPedido"));
+                    pd.setPedidoCabecera(cabecera);
+
+                    // Datos de Persona
+                    cabecera.setNombrePersona(rs.getString("nombrePersona"));
+                    cabecera.setApellidoPersona(rs.getString("apellidoPersona"));
+                    cabecera.setNumeroIdentificacion(rs.getString("identificacionPersona"));
+
+                    // Inicializar las listas
+                    pd.setProductos(new ArrayList<>());
+                    pd.setUnidades(new ArrayList<>());
+                    pd.setCantidades(new ArrayList<>());
+                    pd.setPreciosUnitarios(new ArrayList<>());
+
+                    mapaPedidos.put(idPedidoCabecera, pd);
+                }
+
+                // Crear y agregar el producto
                 Productos producto = new Productos();
-                producto.setIdProductos(pd.getProductos_idProductos()); // del mismo detalle
                 producto.setNombre(rs.getString("nombreProducto"));
                 producto.setDescripcion(rs.getString("descripcionProducto"));
-                pd.setProducto(producto); // Necesitarías agregar este campo en tu clase PedidoDetalle
+                pd.getProductos().add(producto);
 
-                // Unidades
+                // Crear y agregar la unidad
                 Unidades unidad = new Unidades();
-                unidad.setIdUnidades(pd.getUnidades_idUnidades()); // del mismo detalle
                 unidad.setDescripcionUnidades(rs.getString("descripcionUnidad"));
-                pd.setUnidad(unidad); // Necesitarías agregar este campo en tu clase PedidoDetalle
+                pd.getUnidades().add(unidad);
 
-                // datos de Persona
-                cabecera.setNombrePersona(rs.getString("nombrePersona"));
-                cabecera.setApellidoPersona(rs.getString("apellidoPersona"));
-                cabecera.setNumeroIdentificacion(rs.getString("identificacionPersona"));
+                // Agregar la cantidad y el precio unitario
+                pd.getCantidades().add(rs.getDouble("cantidad"));
+                pd.getPreciosUnitarios().add(rs.getDouble("precioUnitario"));
 
-                lista.add(pd);
+                // No necesitamos agregar el valor total ya que lo calcularemos en la vista
             }
+
+            // Agregar todos los pedidos al listado
+            lista.addAll(mapaPedidos.values());
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
                 if (conn != null && !conn.isClosed()) {
-                    conn.close(); // Asegúrate de cerrar la conexión al final
+                    conn.close();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -87,5 +101,34 @@ public class PedidoDetalleDAO {
         }
 
         return lista;
+
     }
+
+    //metodo para registrar el pedido desde el formulario
+    public boolean registrarPedidoDetalle(PedidoDetalle detalle) {
+        boolean registrado = false;
+        String sql = "INSERT INTO pedidodetalle (cantidad, precioUnitario, valorPedido, PedidoCabecera_idPedidoCabecera, Productos_idProductos, Unidades_idUnidades) VALUES (?, ?, ?, ?, ?, ?)";
+
+        Conexion con = new Conexion();
+
+        try (
+                Connection conn = con.getConn(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, detalle.getCantidad());
+            ps.setDouble(2, detalle.getPrecioUnitario());
+            ps.setDouble(3, detalle.getValorPedido());
+            ps.setInt(4, detalle.getPedidoCabecera_idPedidoCabecera());
+            ps.setInt(5, detalle.getProductos_idProductos());
+            ps.setInt(6, detalle.getUnidades_idUnidades());
+
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                registrado = true;
+            }
+        } catch (Exception e) {
+            System.out.println("Error al registrar detalle del pedido: " + e.getMessage());
+        }
+
+        return registrado;
+    }
+
 }

@@ -12,28 +12,48 @@ import java.sql.SQLException;
 public class UsuariosDAO {
     // validar el ususario para el login
 
-    public boolean ValidarUsuarioLogin(String nombreUsuario, String contrasenaUsuario) {
-        boolean existe = false;
+public Persona ValidarUsuarioLogin(String nombreUsuario, String contrasenaUsuario) {
+    Persona persona = null;
 
-        Conexion miconexion = new Conexion();
-        Connection nuevaCon = miconexion.getConn();
+    Conexion miconexion = new Conexion();
+    Connection nuevaCon = miconexion.getConn();
 
-        try {
-            String querySQL = "SELECT * FROM Usuarios WHERE nombreUsuario = ? AND contrasenaUsuario = ?";
-            PreparedStatement sentencia = nuevaCon.prepareStatement(querySQL);
-            sentencia.setString(1, nombreUsuario);
-            sentencia.setString(2, contrasenaUsuario);
-            ResultSet rs = sentencia.executeQuery();
+    try {
+        String querySQL = "SELECT p.idPersona, p.numeroIdentificacion, p.nombres, p.apellidos, " +
+                          "p.telefono, p.correo, p.direccion, p.TipoIdentificacion_idTipoIdentificacion, " +
+                          "r.idRoles, r.descripcionRol AS rolDescripcion " +
+                          "FROM persona p " +
+                          "INNER JOIN usuarios u ON p.Usuarios_idUsuarios = u.idUsuarios " + // Aquí usamos el nombre correcto
+                          "INNER JOIN roles r ON p.Roles_idRoles = r.idRoles " + // Relacionamos con la tabla roles
+                          "WHERE u.nombreUsuario = ? AND u.contrasenaUsuario = ?";
 
-            if (rs.next()) {
-                existe = true;
-            }
-        } catch (Exception ex) {
-            System.err.println("Error al validar Usuario: " + ex.getMessage());
+        PreparedStatement sentencia = nuevaCon.prepareStatement(querySQL);
+        sentencia.setString(1, nombreUsuario);
+        sentencia.setString(2, contrasenaUsuario);
+        ResultSet rs = sentencia.executeQuery();
+
+        if (rs.next()) {
+            persona = new Persona();
+            persona.setIdPersona(rs.getInt("idPersona"));
+            persona.setNumeroIdentificacion(rs.getInt("numeroIdentificacion"));
+            persona.setNombres(rs.getString("nombres"));
+            persona.setApellidos(rs.getString("apellidos"));
+            persona.setTelefono(rs.getString("telefono"));
+            persona.setCorreo(rs.getString("correo"));
+            persona.setDireccion(rs.getString("direccion"));
+            persona.setTipoIdentificacion_idTipoIdentificacion(rs.getInt("TipoIdentificacion_idTipoIdentificacion"));
+            persona.setRoles_idRoles(rs.getInt("idRol"));
+            persona.setDescripcionRol(rs.getString("rolDescripcion"));
         }
 
-        return existe;
+    } catch (Exception ex) {
+        System.err.println("Error al validar Usuario: " + ex.getMessage());
     }
+
+    return persona;
+
+}
+
 
     //cargar datos de los ususarios registrados en la vista de usuarios.jsp
     public List<Usuarios> listarUsuarios() {

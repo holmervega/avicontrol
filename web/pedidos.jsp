@@ -1,3 +1,5 @@
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -71,14 +73,51 @@
                                 <td>${pedido.pedidoCabecera.fechaPedido}</td>
                                 <td>${pedido.pedidoCabecera.nombrePersona} ${pedido.pedidoCabecera.apellidoPersona}</td>
                                 <td>${pedido.pedidoCabecera.numeroIdentificacion}</td>
-                                <td>${pedido.cantidad}</td>
-                                <td>${pedido.producto.nombre}</td>
-                                <td>${pedido.unidad.descripcionUnidades}</td>
-                                <td>${pedido.precioUnitario}</td>
-                                <td>${pedido.valorPedido}</td>
+
+                                <!-- Mostrar los productos -->
+                                <td>
+                                    <c:forEach var="producto" items="${pedido.productos}">
+                                        <p>${producto.nombre} - ${producto.descripcion}</p>
+                                    </c:forEach>
+                                </td>
+
+                                <!-- Mostrar las unidades -->
+                                <td>
+                                    <c:forEach var="unidad" items="${pedido.unidades}">
+                                        <p>${unidad.descripcionUnidades}</p>
+                                    </c:forEach>
+                                </td>
+
+                                <!-- Mostrar la cantidad y el precio unitario por producto -->
+                                <td>
+                                    <c:forEach var="cantidad" items="${pedido.cantidades}">
+                                        <p>${cantidad}</p>
+                                    </c:forEach>
+                                </td>
+
+                                <td>
+                                    <c:forEach var="precio" items="${pedido.preciosUnitarios}">
+                                        <p>${precio}</p>
+                                    </c:forEach>
+                                </td>
+
+                                <!-- Mostrar el valor total del pedido -->
+                                 <td>
+                <c:set var="valorTotal" value="0" />
+                <c:forEach var="i" begin="0" end="${fn:length(pedido.productos) - 1}">
+                    <c:set var="cantidad" value="${pedido.cantidades[i]}" />
+                    <c:set var="precio" value="${pedido.preciosUnitarios[i]}" />
+                    <c:set var="valorTotal" value="${valorTotal + (cantidad * precio)}" />
+                </c:forEach>
+                <p>${valorTotal}</p> <!-- Muestra el valor total de todos los productos -->
+            </td>
+
+
                             </tr>
                         </c:forEach>
                     </tbody>
+
+
 
                     </thead>
                 </table>

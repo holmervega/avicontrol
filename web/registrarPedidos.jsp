@@ -7,7 +7,7 @@
     <head>
         <script>
             function mostrarFormularioPedido() {
-                document.getElementById('formularioPedido').style.display = 'block';
+            document.getElementById('formularioPedido').style.display = 'block';
             }
         </script>
 
@@ -103,104 +103,198 @@
                             <input type="hidden" name="idPersona" value="${persona.idPersona}" />
 
                             <div class="row g-3">
+                                <!-- Número de Pedido (Solo una vez) -->
                                 <div class="col-md-4">
-                                    <label for="productoSelect" class="form-label">Producto:</label>
-                                    <select class="form-control" name="producto" id="productoSelect" required>
-                                        <option value="">Seleccione un producto</option>
-                                        <c:forEach var="producto" items="${productos}">
-                                            <option value="${producto.idProductos}" data-descripcion="${producto.descripcion}">
-                                                ${producto.nombre}
-                                            </option>
-                                        </c:forEach>
-                                    </select>
+                                    <label for="numeroPedido" class="form-label">Número de Pedido:</label>
+                                    <input type="text" class="form-control" name="numeroPedido" id="numeroPedido" value="${numeroPedido}" readonly>
                                 </div>
 
+                                <!-- Fecha del Pedido (Solo una vez) -->
                                 <div class="col-md-4">
-                                    <label for="descripcionProducto" class="form-label">Descripción:</label>
-                                    <input type="text" class="form-control" id="descripcionProducto" readonly>
+                                    <label for="fechaPedido" class="form-label">Fecha del Pedido:</label>
+                                    <input type="date" class="form-control" name="fechaPedido" id="fechaPedido" required>
                                 </div>
+                            </div>
 
-                                <div class="col-md-4">
-                                    <label for="unidadesSelect" class="form-label">Unidades:</label>
-                                    <select class="form-control" name="unidades" id="unidadesSelect" required>
-                                        <option value="">Seleccione una unidad</option>
-                                        <c:forEach var="unidades" items="${unidades}">
-                                            <option value="${unidades.idUnidades}" data-descripcion="${producto.descripcion}">
-                                                ${unidades.descripcionUnidades}
-                                            </option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
+                            <!-- Contenedor de productos -->
+                            <div id="productosContainer"></div>
 
-                                <div class="col-md-4">
-                                    <label for="cantidad" class="form-label">Cantidad:</label>
-                                    <input type="number" class="form-control" name="cantidad" min="1" required>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label for="valorUnitario" class="form-label">Valor Unitario:</label>
-                                    <input type="number" class="form-control" name="valorUnitario" min="0" required>
-                                </div>
-
+                            <!-- Total del pedido (Sumatoria de todos los productos) -->
+                            <div class="row g-3 mt-3">
                                 <div class="col-md-4">
                                     <label for="valorTotal" class="form-label">Valor Total:</label>
                                     <input type="text" class="form-control" id="valorTotal" name="valorTotal" readonly>
                                 </div>
                             </div>
 
-                            <div class="text-center mt-4">
-                                <button type="submit" class="btn btn-primary">Guardar Pedido</button>
+                            <!-- Botón para agregar productos -->
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-success" onclick="agregarProducto()">Agregar Producto</button>
                             </div>
+
+                            <!-- Botón para registrar el pedido -->
+                            <button type="submit" class="btn btn-primary mt-3">Registrar Pedido</button>
                         </form>
                     </div>
+
+                    <script>
+                    // Función para agregar un producto al formulario
+                                    function agregarProducto() {
+                                    const container = document.getElementById("productosContainer");
+                                    // Crear una nueva fila para el producto
+                                    const row = document.createElement("div");
+                                    row.classList.add("row");
+                                    row.classList.add("productoRow");
+                                    row.innerHTML = `
+                                            <div class="col-md-4">
+                                                <label for="productoSelect" class="form-label">Producto:</label>
+                                                    <select class="form-control" name="idProducto[]" required onchange="actualizarDescripcion(this)">
+                                                        <option value="">Seleccione un producto</option>
+                        <c:forEach var="producto" items="${productos}">
+                                                        <option value="${producto.idProductos}" data-descripcion="${producto.descripcion}">
+                            ${producto.nombre}
+                                                    </option>
+                        </c:forEach>
+                                            </select>
+                                        </div>
+
+                            <div class="col-md-4">
+                                <label for="descripcionProducto" class="form-label">Descripción:</label>
+                                <input type="text" class="form-control" name="descripcionProducto[]" readonly>
+                                        </div>
+                    
+                                        <div class="col-md-4">
+                                        <label for="cantidad" class="form-label">Cantidad:</label>
+                                            <input type="number" class="form-control" name="cantidad[]" min="1" required onchange="calcularTotal()">
+                                                </div>
+                            
+                                                <div class="col-md-4">
+                                            <label for="precioUnitario" class="form-label">Precio Unitario:</label>
+                                                <input type="number" class="form-control" name="precioUnitario[]" min="0" required onchange="calcularTotal()">
+                                                </div>
+                            
+                                            <!-- Unidades (Dentro del script ahora) -->
+                                            <div class="col-md-4">
+                                                <label for="unidadesSelect" class="form-label">Unidades:</label>
+                                                <select class="form-control" name="idUnidad[]" required>
+                                                <option value="">Seleccione una unidad</option>
+                        <c:forEach var="unidades" items="${unidades}">
+                                            <option value="${unidades.idUnidades}" data-descripcion="${unidades.descripcionUnidades}">
+                            ${unidades.descripcionUnidades}
+                                                </option>
+                        </c:forEach>
+                                                </select>
+                                            </div>
+                        
+                                            <div class="col-md-4">
+                                                <label for="valorTotalProducto" class="form-label">Valor Total Producto:</label>
+                                                <input type="text" class="form-control" name="valorTotalProducto[]" readonly>
+                                            </div>
+                            
+                                                <button type="button" class="btn btn-danger" onclick="eliminarProducto(this)">Eliminar Producto</button>
+                        `;
+
+                        container.appendChild(row);
+                    }
+
+                    // Función para eliminar un producto
+                    function eliminarProducto(button) {
+                        const row = button.parentElement;
+                        row.remove();
+                        calcularTotal();
+                    }
+
+                    // Función para actualizar la descripción del producto cuando se selecciona uno
+                    function actualizarDescripcion(select) {
+                        const descripcionInput = select.closest(".productoRow").querySelector("input[name='descripcionProducto[]']");
+                        const descripcion = select.options[select.selectedIndex].getAttribute("data-descripcion");
+                        descripcionInput.value = descripcion;
+                        calcularTotal();
+                    }
+
+                    // Función para calcular el valor total de todos los productos
+                    function calcularTotal() {
+                        const precios = document.querySelectorAll("input[name='precioUnitario[]']");
+                        const cantidades = document.querySelectorAll("input[name='cantidad[]']");
+                        let total = 0;
+
+                        precios.forEach((precioInput, index) => {
+                            const precio = parseFloat(precioInput.value) || 0;
+                            const cantidad = parseInt(cantidades[index].value) || 0;
+                            const valorTotalProducto = precio * cantidad;
+
+                            // Actualizamos el valor total del producto en el formulario
+                            const valorTotalProductoInput = precioInput.closest(".productoRow").querySelector("input[name='valorTotalProducto[]']");
+                            valorTotalProductoInput.value = valorTotalProducto.toFixed(2);
+
+                            total += valorTotalProducto;
+                        });
+
+                        // Actualizamos el valor total del pedido
+                        const valorTotalInput = document.getElementById("valorTotal");
+                        valorTotalInput.value = total.toFixed(2);
+                    }
+                    </script>
+
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary">Guardar Pedido</button>
+                    </div>
+                    </form>
                 </div>
-            </c:if>
+            </div>
+        </c:if>
 
-            <!-- Mensaje de error si aplica -->
-            <c:if test="${not empty mensaje}">
-                <div class="alert alert-danger">
-                    <p>${mensaje}</p>
-                </div>
-            </c:if>
+        <!-- Mensaje de error si aplica -->
+        <c:if test="${not empty mensaje}">
+            <div class="alert alert-danger">
+                <p>${mensaje}</p>
+            </div>
+        </c:if>
 
-            <!-- Footer -->
-            <footer class="bg-light text-center text-lg-start">
-                <div class="text-center p-3">
-                    © 2024 Avicontrol. Todos los derechos reservados.
-                </div>
-            </footer>
+        <!-- Footer -->
+        <footer class="bg-light text-center text-lg-start">
+            <div class="text-center p-3">
+                © 2024 Avicontrol. Todos los derechos reservados.
+            </div>
+        </footer>
 
-            <!-- Scripts -->
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-            <script>
-                            document.getElementById("productoSelect").addEventListener("change", function () {
-                                const selectedOption = this.options[this.selectedIndex];
-                                const descripcion = selectedOption.getAttribute("data-descripcion");
-                                document.getElementById("descripcionProducto").value = descripcion ? descripcion : "";
-                            });
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+    // Actualiza la descripción del producto cuando se selecciona uno
+        document.getElementById("productoSelect").addEventListener("change", function () {
+                            const selectedOption = this.options[this.selectedIndex];
+                    const descripcion = selectedOption.getAttribute("data-descripcion");
+                    document.getElementById("descripcionProducto").value = descripcion ? descripcion : "";
+            });
+        
+            // Elementos de cantidad, precio unitario y total
+                const cantidadInput = document.querySelector('input[name="cantidad"]');
+                    const precioUnitarioInput = document.querySelector('input[name="precioUnitario"]'); // corregido aquí
+                    const valorTotalInput = document.getElementById('valorTotal');
+            
+                // Función para calcular el valor total
+                function calcularValorTotal() {
+                            const cantidad = parseFloat(cantidadInput.value);
+                    const precioUnitario = parseFloat(precioUnitarioInput.value);
+                    if (!isNaN(cantidad) && !isNaN(precioUnitario)) {
+                    const total = cantidad * precioUnitario;
+                    valorTotalInput.value = total.toLocaleString('es-CO', {
+                    minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                    });
+                    } else {
+                    valorTotalInput.value = '';
+                    }
+                    }
+                
+                    // Eventos que recalculan cuando cambia la cantidad o el precio
+            cantidadInput.addEventListener('input', calcularValorTotal);
+            precioUnitarioInput.addEventListener('input', calcularValorTotal);
+        </script>
 
-                            const cantidadInput = document.querySelector('input[name="cantidad"]');
-                            const valorUnitarioInput = document.querySelector('input[name="valorUnitario"]');
-                            const valorTotalInput = document.getElementById('valorTotal');
-
-                            function calcularValorTotal() {
-                                const cantidad = parseFloat(cantidadInput.value);
-                                const valorUnitario = parseFloat(valorUnitarioInput.value);
-
-                                if (!isNaN(cantidad) && !isNaN(valorUnitario)) {
-                                    const total = cantidad * valorUnitario;
-                                    valorTotalInput.value = total.toLocaleString('es-CO', {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2
-                                    });
-                                } else {
-                                    valorTotalInput.value = '';
-                                }
-                            }
-
-                            cantidadInput.addEventListener('input', calcularValorTotal);
-                            valorUnitarioInput.addEventListener('input', calcularValorTotal);
-            </script>
-        </div>
-    </body>
+    </div>
+</body>
 </html>

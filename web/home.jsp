@@ -62,9 +62,9 @@
         </a>
     </div>
     <div class="col text-center">
-        <a href="#" class="btn btn-primary">Pedidos</a>
+        <a href="PedidosControl?action=listarPedidos" class="btn btn-primary" >Pedidos</a>
         <br>
-        <a href="#" class="img-link">
+        <a href="PedidosControl?action=listarPedidos" class="img-link">
             <img src="Vista/Imagenes/pedidos.png" alt="Pedidos" class="img-pedidos">
         </a>
     </div>

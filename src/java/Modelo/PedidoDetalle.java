@@ -1,5 +1,7 @@
 package Modelo;
 
+import java.util.List;
+
 public class PedidoDetalle {
 
     private int idPedidoDetalle;
@@ -12,6 +14,49 @@ public class PedidoDetalle {
     private PedidoCabecera pedidoCabecera;
     private Productos producto;
     private Unidades unidad;
+    private List<Double> cantidades;
+    private List<Double> preciosUnitarios;
+
+   
+
+    public List<Double> getCantidades() {
+        return cantidades;
+    }
+
+    public void setCantidades(List<Double> cantidades) {
+        this.cantidades = cantidades;
+    }
+
+    public List<Double> getPreciosUnitarios() {
+        return preciosUnitarios;
+    }
+
+    public void setPreciosUnitarios(List<Double> preciosUnitarios) {
+        this.preciosUnitarios = preciosUnitarios;
+    }
+  
+
+
+    
+    private List<Productos> productos;
+
+    private List<Unidades> unidades;
+
+    public List<Productos> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<Productos> productos) {
+        this.productos = productos;
+    }
+
+    public List<Unidades> getUnidades() {
+        return unidades;
+    }
+
+    public void setUnidades(List<Unidades> unidades) {
+        this.unidades = unidades;
+    }
 
     public Productos getProducto() {
         return producto;
