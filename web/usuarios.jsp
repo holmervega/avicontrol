@@ -73,11 +73,16 @@ if (mensaje != null) {
 
         <div class="container-fluid my-4">
             <h2 class="text-center mb-4">Usuarios Registrados</h2>
+           
+            <div class="mb-3">
+                <input type="text" id="buscarUsuario" class="form-control" placeholder="Buscar usuario.">
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-striped table-bordered w-100" style="width: 100%; min-width: 1000px;">
                     <thead class="table-primary">
                         <tr>
-                           <th>Tipo de<br>Identificación</th>
+                            <th>Tipo de<br>Identificación</th>
                             <th>Numero <br>identificación</th>
                             <th>Nombres</th>
                             <th>Apellidos</th>
@@ -120,7 +125,20 @@ if (mensaje != null) {
                 </table>
             </div>
         </div>
-      
+        
+        <!-- Script de búsqueda -->
+        <script>
+            document.getElementById('buscarUsuario').addEventListener('keyup', function () {
+                let filtro = this.value.toLowerCase();
+                let filas = document.querySelectorAll('#usuarios tr');
+
+                filas.forEach(function (fila) {
+                    let textoFila = fila.textContent.toLowerCase();
+                    fila.style.display = textoFila.includes(filtro) ? '' : 'none';
+                });
+            });
+        </script>
+
 
 
         <div class="row">

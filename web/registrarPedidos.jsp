@@ -48,15 +48,24 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="numeroIdentificacion" class="form-label">Buscar cliente:</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="numeroIdentificacion" name="numeroIdentificacion" placeholder="Ingrese identificación" required>
-                                    <button class="btn btn-primary" type="submit" name="action" value="buscarCliente">Buscar</button>
+                                <div class="d-flex align-items-center">
+                                    <div class="input-group" style="flex-grow: 1;">
+                                        <input type="text" class="form-control" id="numeroIdentificacion" name="numeroIdentificacion" placeholder="Ingrese identificación" required>
+                                        <button class="btn btn-primary" type="submit" name="action" value="buscarCliente">Buscar</button>
+                                    </div>
+                                    <a href="PedidosControl?action=listarPedidos" class="btn btn-primary ms-3">
+                                        Inicio
+                                    </a>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
+            <!-- Botón Cancelar -->
+           
 
             <!-- Mostrar datos del cliente si existe -->
             <c:if test="${not empty persona}">
@@ -93,7 +102,7 @@
 
                     <!-- Botón para mostrar el formulario de pedido -->
                     <div class="text-center mb-4">
-                        <button type="button" class="btn btn-success" onclick="mostrarFormularioPedido()">Registrar Pedido</button>
+                        <button type="button" class="btn btn-success" onclick="mostrarFormularioPedido()">Nuevo Pedido</button>
                     </div>
 
                     <!-- Formulario de pedido (oculto inicialmente) -->
@@ -132,8 +141,14 @@
                                 <button type="button" class="btn btn-success" onclick="agregarProducto()">Agregar Producto</button>
                             </div>
 
-                            <!-- Botón para registrar el pedido -->
-                            <button type="submit" class="btn btn-primary mt-3">Registrar Pedido</button>
+                            <!-- Botones para registrar o cancelar el pedido -->
+                            <div class="text-center mt-3">
+                                <button type="submit" class="btn btn-primary">Registrar Pedido</button>
+                               
+                            </div>
+
+
+
                         </form>
                     </div>
 
@@ -191,7 +206,7 @@
                                                 <input type="text" class="form-control" name="valorTotalProducto[]" readonly>
                                             </div>
                             
-                                                <button type="button" class="btn btn-danger" onclick="eliminarProducto(this)">Eliminar Producto</button>
+                                                <button type="button" class="btn btn-danger mt-4" onclick="eliminarProducto(this)">Eliminar Producto</button>
                         `;
 
                         container.appendChild(row);
@@ -228,18 +243,15 @@
                             valorTotalProductoInput.value = valorTotalProducto.toFixed(2);
 
                             total += valorTotalProducto;
-                        });
+                                        });
 
-                        // Actualizamos el valor total del pedido
-                        const valorTotalInput = document.getElementById("valorTotal");
-                        valorTotalInput.value = total.toFixed(2);
-                    }
+                                        // Actualizamos el valor total del pedido
+                                        const valorTotalInput = document.getElementById("valorTotal");
+                                        valorTotalInput.value = total.toFixed(2);
+                                    }
                     </script>
 
 
-                    <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-primary">Guardar Pedido</button>
-                    </div>
                     </form>
                 </div>
             </div>

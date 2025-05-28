@@ -42,7 +42,7 @@ public Persona ValidarUsuarioLogin(String nombreUsuario, String contrasenaUsuari
             persona.setCorreo(rs.getString("correo"));
             persona.setDireccion(rs.getString("direccion"));
             persona.setTipoIdentificacion_idTipoIdentificacion(rs.getInt("TipoIdentificacion_idTipoIdentificacion"));
-            persona.setRoles_idRoles(rs.getInt("idRol"));
+            persona.setRoles_idRoles(rs.getInt("idRoles"));
             persona.setDescripcionRol(rs.getString("rolDescripcion"));
         }
 

@@ -51,6 +51,12 @@
         <!-- Tabla pedidos -->
         <div class="container-fluid my-4">
             <h2 class="text-center mb-4">Pedidos Registrados</h2>
+
+            <!-- Campo de búsqueda -->
+            <div class="mb-3">
+                <input type="text" id="buscarPedido" class="form-control" placeholder="Buscar por número, cliente, producto, etc.">
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-striped table-bordered w-100" style="width: 100%; min-width: 1000px;">
                     <thead class="table-primary">
@@ -66,7 +72,7 @@
                             <th>Valor<br>Total</th>                          
 
                         </tr>
-                    <tbody>
+                    <tbody id="tablaPedidos">
                         <c:forEach var="pedido" items="${listaPedidos}">
                             <tr class="tabla-fondo-personalizado">
                                 <td>${pedido.pedidoCabecera.numeroPedido}</td>
@@ -102,15 +108,15 @@
                                 </td>
 
                                 <!-- Mostrar el valor total del pedido -->
-                                 <td>
-                <c:set var="valorTotal" value="0" />
-                <c:forEach var="i" begin="0" end="${fn:length(pedido.productos) - 1}">
-                    <c:set var="cantidad" value="${pedido.cantidades[i]}" />
-                    <c:set var="precio" value="${pedido.preciosUnitarios[i]}" />
-                    <c:set var="valorTotal" value="${valorTotal + (cantidad * precio)}" />
-                </c:forEach>
-                <p>${valorTotal}</p> <!-- Muestra el valor total de todos los productos -->
-            </td>
+                                <td>
+                                    <c:set var="valorTotal" value="0" />
+                                    <c:forEach var="i" begin="0" end="${fn:length(pedido.productos) - 1}">
+                                        <c:set var="cantidad" value="${pedido.cantidades[i]}" />
+                                        <c:set var="precio" value="${pedido.preciosUnitarios[i]}" />
+                                        <c:set var="valorTotal" value="${valorTotal + (cantidad * precio)}" />
+                                    </c:forEach>
+                                    <p>${valorTotal}</p> <!-- Muestra el valor total de todos los productos -->
+                                </td>
 
 
                             </tr>
@@ -123,6 +129,19 @@
                 </table>
             </div>
         </div>
+
+        <!-- Script de búsqueda para pedidos -->
+        <script>
+            document.getElementById('buscarPedido').addEventListener('keyup', function () {
+                let filtro = this.value.toLowerCase();
+                let filas = document.querySelectorAll('#tablaPedidos tr');
+
+                filas.forEach(function (fila) {
+                    let textoFila = fila.textContent.toLowerCase();
+                    fila.style.display = textoFila.includes(filtro) ? '' : 'none';
+                });
+            });
+        </script>
 
 
 

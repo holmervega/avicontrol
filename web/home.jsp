@@ -1,4 +1,38 @@
 <!DOCTYPE html>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ page session="true" %>
+
+<%
+    // La variable 'session' ya está implícitamente disponible en JSP.
+    // No es necesario declararla nuevamente.
+    if (session == null || session.getAttribute("usuario") == null) {
+        System.out.println("Sesión no válida o no hay usuario. Redirigiendo a login.");
+        // Si la sesión es nula o no hay usuario, redirigir a login
+        response.sendRedirect("index.jsp?error=1");
+        return;
+    }
+
+    // Obtener el rol del usuario desde la sesión
+    String rol = (String) session.getAttribute("rolDescripcion");
+
+    // Depuración: Verificar el rol del usuario
+    System.out.println("Rol del usuario desde la sesión: " + rol);
+
+    // Verificar el rol y controlar el acceso
+    if ("Administrador".equalsIgnoreCase(rol)) {
+        // Página para Administrador
+        out.println("Bienvenido Administrador");
+    } else if ("Conductor".equalsIgnoreCase(rol)) {
+        // Página para Cliente
+        out.println("Bienvenido Conductor");
+    } else {
+        // Si no tiene un rol reconocido, redirigirlo o mostrar un mensaje
+        System.out.println("Rol no reconocido. Redirigiendo a página de login.");
+        response.sendRedirect("index.jsp?error=2");
+    }
+%>
+
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <html>
@@ -28,14 +62,18 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav ms-auto">
+                            
+                            <% if ("Administrador".equalsIgnoreCase(rol) || "Gerente".equalsIgnoreCase(rol)) { %>
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="UsuariosControl?action=mostrarUsuarios">USUARIOS</a>
-                            </li>        
+                            </li>
+                            <% } %>
+
                             <li class="nav-item" id="menuUsuarios">
                                 <a class="nav-link active" aria-current="page" href="ClientesControl?action=listarClientes">CLIENTES</a>
                             </li>
                             <li class="nav-item">
-                               <a class="nav-link active" aria-current="page" href="PedidosControl?action=listarPedidos">PEDIDOS</a>
+                                <a class="nav-link active" aria-current="page" href="PedidosControl?action=listarPedidos">PEDIDOS</a>
 
                             </li>
                             <li class="nav-item">

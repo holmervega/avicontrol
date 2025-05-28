@@ -37,7 +37,7 @@
                     <form id="loginForm" action="LoginControl" method="POST">
                         <div class="mb-4">
                             <label class="form-label">Ingrese su usuario</label>
-                            <input type="text" class="form-control" name="usuario" id="usuario">
+                            <input type="text" class="form-control" name="usuario" id="usuario" autocomplete="off">
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Ingrese su contraseña</label>
