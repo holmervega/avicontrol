@@ -40,33 +40,40 @@
 
 <form action="ReportesControl" method="get">
     <label for="identificacion">Identificación:</label>
-    <input type="text" id="identificacion" name="identificacion">
+    <input type="text" id="identificacion" name="identificacion" value="${param.identificacion}">
 
     <label for="fecha">Fecha:</label>
-    <input type="date" id="fecha" name="fecha">
+    <input type="date" id="fecha" name="fecha" value="${param.fecha}">
 
     <input type="submit" value="Buscar">
 </form>
 
+
 <h2>Resultados</h2>
 
 <c:if test="${not empty listaPedidosFiltrados}">
+    <!-- Botón PDF -->
+    <form action="ReportePDFControl" method="get" target="_blank" style="text-align: center; margin-top: 10px;">
+        <input type="hidden" name="identificacion" value="${param.identificacion}">
+        <input type="hidden" name="fecha" value="${param.fecha}">
+        <input type="submit" class="btn" value="Exportar a PDF">
+    </form>
     <table>
         <thead>
-        <tr>
-            <th>Número de Pedido</th>
-            <th>Fecha</th>
-            <th>Cliente</th>
-            <th>Producto</th>
-            <th>Unidad</th>
-            <th>Cantidad</th>
-            <th>Precio Unitario</th>
-        </tr>
+            <tr>
+                <th>Número de Pedido</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Unidad</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+            </tr>
         </thead>
         <tbody>
-        <c:set var="totalGeneral" value="0" />
-        <c:forEach var="p" items="${listaPedidosFiltrados}">
-            <c:set var="numFilas" value="${fn:length(p.productos)}" />
+            <c:set var="totalGeneral" value="0" />
+            <c:forEach var="p" items="${listaPedidosFiltrados}">
+                <c:set var="numFilas" value="${fn:length(p.productos)}" />
             <c:set var="totalPedido" value="0" />
             <c:forEach var="i" begin="0" end="${numFilas - 1}">
                 <tr>
