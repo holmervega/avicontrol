@@ -1,0 +1,92 @@
+/* Fondo general */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #FFA726, #FFEB3B);
+}
+
+/* Título principal */
+h2, h1 {
+    text-align: center;
+    color: #333;
+    padding: 20px 0 10px 0;
+}
+
+/* Formulario de filtros */
+form {
+    margin: 0 auto 20px auto;
+    text-align: center;
+}
+
+label {
+    margin-right: 8px;
+}
+
+input[type="text"],
+input[type="date"] {
+    padding: 6px;
+    margin-right: 10px;
+}
+
+.btn {
+    padding: 8px 12px;
+    background-color: #1976D2;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.btn:hover {
+    background-color: #1565C0;
+}
+
+/* Tabla de reportes */
+table {
+    width: 90%;
+    margin: 20px auto 30px auto;
+    border-collapse: collapse;
+    background-color: #E3F2FD;
+    font-size: 14px;
+}
+
+table th {
+    background-color: #BBDEFB;
+    color: #333;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+table td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ccc;
+}
+
+/* Celdas combinadas (rowspan) sin líneas internas */
+.rowspan-cell {
+    border-top: none;
+    border-bottom: none;
+    background-color: #E3F2FD;
+    vertical-align: middle;
+}
+
+/* Fila de totales por pedido */
+.total-row {
+    background-color: #F0F4C3;
+    font-weight: bold;
+}
+
+/* Fila de total general */
+.total-general {
+    background-color: #DCE775;
+    font-weight: bold;
+}
+
+/* Separación entre pedidos (opcional) */
+.pedido-separador td {
+    border-top: 3px solid #90CAF9;
+}

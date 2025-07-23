@@ -1,0 +1,7 @@
+body{
+    background:#ffe259;
+    background: linear-gradient(to right, #ffa751,#ffe259);
+}
+.tabla-fondo-personalizado {
+    background-color: #f0f8ff; /* Cambia el color de fondo que desees */
+}
