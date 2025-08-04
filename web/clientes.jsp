@@ -116,7 +116,7 @@
                                             <input type="hidden" name="id" value="${cliente.idPersona}">
                                             <button type="submit" class="btn btn-sm btn-danger"
                                                     onclick="return confirm('¿Estás seguro de que deseas eliminar este cliente?');">
-                                                Eliminar
+                                                Desactivar
                                             </button>
                                         </form>
                                     </c:if>

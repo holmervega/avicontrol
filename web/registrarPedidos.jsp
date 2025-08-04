@@ -92,7 +92,7 @@
 
                     <!-- Botón para mostrar el formulario de pedido -->
                     <div class="text-center mb-4">
-                        <button type="button" class="btn btn-success" onclick="mostrarFormularioPedido()">Registrar Pedido</button>
+                        <button type="button" class="btn btn-success" onclick="mostrarFormularioPedido()">Iniciar Pedido</button>
                     </div>
 
                     <!-- Formulario de pedido (oculto inicialmente) -->
